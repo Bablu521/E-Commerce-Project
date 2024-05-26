@@ -172,13 +172,11 @@ let event;
   // Handle the event
   const orderId = event.data.object.metadata.order_id
   if (event.type == "checkout.session.completed"){
-   const updatedOrder = await orderModel.findByIdAndUpdate({_id : orderId} , {status : "visa paid"} , {new:true})
-   await updatedOrder.save()
-   return res.status(200).json({message : "Done" , updatedOrder : updatedOrder})
+    await orderModel.findByIdAndUpdate({_id : orderId} , {status : "visa paid"})
+    return;
   }
-  const updatedOrder = await orderModel.findByIdAndUpdate({_id : orderId} , {status : "failed to pay"} , {new:true})
-  await updatedOrder.save()
-  return res.status(400).json({message : "Failed Payment" , updatedOrder : updatedOrder})
+  await orderModel.findByIdAndUpdate({_id : orderId} , {status : "failed to pay"})
+  return;
 })
 
 

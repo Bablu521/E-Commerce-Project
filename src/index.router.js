@@ -10,28 +10,31 @@ import cartRouter from "./modules/cart/cart.router.js"
 import orderRouter from "./modules/order/order.router.js"
 import reviewRouter from "./modules/review/review.router.js"
 import morgan from "morgan"
+import cors from "cors"
 const initApp = (app , express)=>{
     ConnectDB()
     //CORS
-    const whitelist = ["http://127.0.0.1:5500"]
-    app.use((req,res,next)=>{
-        console.log(req.header("origin"))
+    // const whitelist = ["http://127.0.0.1:5500"]
+    // app.use((req,res,next)=>{
+    //     console.log(req.header("origin"))
 
-        if (req.originalUrl.includes("/auth/activate_account")){
-            res.setHeader("Access-Control-Allow-Origin" , "*")
-            res.setHeader("Aceess-Control-Allow-Methods" , 'GET')
-            return next()
-        }
+    //     if (req.originalUrl.includes("/auth/activate_account")){
+    //         res.setHeader("Access-Control-Allow-Origin" , "*")
+    //         res.setHeader("Aceess-Control-Allow-Methods" , 'GET')
+    //         return next()
+    //     }
 
-        if (!whitelist.includes(req.header("origin"))){
-            return next (new Error("Blocked By CORS"))
-        }
-        res.setHeader("Access-Control-Allow-Origin" , "*") 
-        res.setHeader("Access-Control-Allow-Headers" , "*")
-        res.setHeader("Access-Control-Allow-Methods" , "*")
-        res.setHeader("Access-Control-Private-Network" , true)
-        return next()
-    })
+    //     if (!whitelist.includes(req.header("origin"))){
+    //         return next (new Error("Blocked By CORS"))
+    //     }
+    //     res.setHeader("Access-Control-Allow-Origin" , "*") 
+    //     res.setHeader("Access-Control-Allow-Headers" , "*")
+    //     res.setHeader("Access-Control-Allow-Methods" , "*")
+    //     res.setHeader("Access-Control-Private-Network" , true)
+    //     return next()
+    // })
+
+    app.use(cors()) 
 
     app.use(morgan("combined"))
 

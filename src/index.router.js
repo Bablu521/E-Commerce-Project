@@ -39,7 +39,7 @@ const initApp = (app , express)=>{
     app.use(morgan("combined"))
 
     app.use((req,res,next)=>{
-        if (req.originalUrl.includes("/order/webhook")){
+        if (req.originalUrl == "/order/webhook" ){
             return next()
         }
         express.json()(req,res,next)

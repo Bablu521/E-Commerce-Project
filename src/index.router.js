@@ -38,7 +38,12 @@ const initApp = (app , express)=>{
 
     app.use(morgan("combined"))
 
-    app.use(express.json())
+    app.use((req,res,next)=>{
+        if (req.originalUrl.includes("/order/webhook")){
+            return next()
+        }
+        express.json()(req,res,next)
+    })
 
     app.get("/" , (req , res ,next)=>{
         return res.json({message:"Welcome E-Commerce Project"})

@@ -12,7 +12,7 @@ const orderSchema = new Schema ({
     phone : { type : String , required : true} ,
     address : { type : String , required : true } ,
     payment : { type : String , enum : ["cash" , "visa"] , default : "cash"  } ,
-    status : { type : String , enum : ["placed" , "shipped" , "cancelled" , "delivered" , "refunded"] , default : "placed" } ,
+    status : { type : String , enum : ["placed" , "shipped" , "cancelled" , "delivered" , "refunded" , "visa paid" , "failed to pay"] , default : "placed" } ,
     price : { type : Number , required :true } ,
     invoice : { url : String , id : String } ,
     coupon : { 

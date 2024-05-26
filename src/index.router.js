@@ -24,7 +24,7 @@ const initApp = (app , express)=>{
         }
 
         if (!whitelist.includes(req.header("origin"))){
-            return next (newError("Blocked By CORS"))
+            return next (new Error("Blocked By CORS"))
         }
         res.setHeader("Access-Control-Allow-Origin" , "*") 
         res.setHeader("Access-Control-Allow-Headers" , "*")
@@ -40,7 +40,7 @@ const initApp = (app , express)=>{
     app.use ("/" , (req , res ,next)=>{
         return res.json({message:"Welcome E-Commerce Project"})
     })
-    
+
     app.use ("/auth" , authRouter)
     app.use ("/category" , categoryRouter)
     app.use ("/subcategory" , subcategoryRouter)

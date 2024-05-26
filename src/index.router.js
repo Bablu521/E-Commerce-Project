@@ -40,7 +40,7 @@ const initApp = (app , express)=>{
 
     app.use(express.json())
 
-    app.use ("/" , (req , res ,next)=>{
+    app.get("/" , (req , res ,next)=>{
         return res.json({message:"Welcome E-Commerce Project"})
     })
 

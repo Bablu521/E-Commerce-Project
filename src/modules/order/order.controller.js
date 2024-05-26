@@ -171,7 +171,8 @@ let event;
 
   // Handle the event
   const orderId = event.data.object.metadata.order_id
-  if (event.type == "checkout.session.completed"){
+  console.log(event.type)
+  if (event.type === "checkout.session.completed"){
     await orderModel.findOneAndUpdate({_id : orderId} , {status : "visa paid"})
     return;
   }

@@ -13,6 +13,8 @@ import { clearCart, updateStock } from "./order.service.js";
 import Stripe from "stripe";
 import fs from 'fs';
 
+    
+
 
 //createOrder
 export const createOrder = asyncHandler(async(req , res , next) =>{
@@ -79,15 +81,46 @@ export const createOrder = asyncHandler(async(req , res , next) =>{
         invoice_number: order._id
       };
     
-      const pdfPath =  path.join(__dirname , `./../../tempInvoices/${order._id}.pdf`)
+    //   const pdfPath =  path.join(__dirname , `./../../tempInvoices/${order._id}.pdf`)
       
-      createInvoice(invoice, pdfPath);
+    //   createInvoice(invoice, pdfPath);
 
-      const {secure_url , public_id} = await cloudinary.uploader.upload(pdfPath , {folder:`${process.env.CLOUD_FOLDER_NAME}/order/invoices`})
-      order.invoice = { url : secure_url , id : public_id }
-      await order.save ()
+    //   const {secure_url , public_id} = await cloudinary.uploader.upload(pdfPath , {folder:`${process.env.CLOUD_FOLDER_NAME}/order/invoices`})
+    //   order.invoice = { url : secure_url , id : public_id }
+    //   await order.save ()
 
-     
+    
+    
+    
+    // Define a writable directory path
+    const tempDir = '/tmp/tempInvoices';
+    const pdfPath = path.join(tempDir, `${order._id}.pdf`);
+    
+    // Ensure the writable directory exists
+    if (!fs.existsSync(tempDir)) {
+        fs.mkdirSync(tempDir, { recursive: true });
+    }
+    
+    // Create the invoice PDF in the writable directory
+    createInvoice(invoice, pdfPath);
+    
+    try {
+        // Upload the PDF to Cloudinary
+        const { secure_url, public_id } = await cloudinary.uploader.upload(pdfPath, {
+            folder: `${process.env.CLOUD_FOLDER_NAME}/order/invoices`
+        });
+    
+        // Update the order with the Cloudinary URL and ID
+        order.invoice = { url: secure_url, id: public_id };
+        await order.save();
+    
+        // Optionally, clean up the temporary file
+        fs.unlinkSync(pdfPath);
+    } catch (error) {
+        console.error('Error uploading to Cloudinary or saving order:', error);
+        // Handle the error as needed
+    }
+    
 
       await sendEmail ({
         to : req.user.email ,

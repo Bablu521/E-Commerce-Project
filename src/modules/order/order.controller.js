@@ -78,15 +78,8 @@ export const createOrder = asyncHandler(async(req , res , next) =>{
         finalPrice : order.finalPrice ,
         invoice_number: order._id
       };
-
-      
-
-
-
-
     
-      const pdfPath =  path.join(__dirname , `/tmp/tempInvoices/${order._id}.pdf`)
-
+      const pdfPath =  path.join(__dirname , `./../../tempInvoices/${order._id}.pdf`)
       
       createInvoice(invoice, pdfPath);
 

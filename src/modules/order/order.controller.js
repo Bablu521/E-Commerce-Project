@@ -87,8 +87,8 @@ export const createOrder = asyncHandler(async(req , res , next) =>{
     
       const pdfPath =  path.join(__dirname , `./../../tempInvoices/${order._id}.pdf`)
 
-      if (!fs.existsSync(path.join(__dirname , './../../tempInvoices'))) {
-        fs.mkdirSync((path.join(__dirname , './../../tempInvoices')), { recursive: true });
+      if (!fs.existsSync(path.join(__dirname , '/tmp/tempInvoices'))) {
+        fs.mkdirSync((path.join(__dirname , '/tmp/tempInvoices')), { recursive: true });
     }
     
     fs.writeFile(pdfPath, 'Your file content here', (err) => {

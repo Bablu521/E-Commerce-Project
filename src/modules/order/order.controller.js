@@ -78,7 +78,7 @@ export const createOrder = asyncHandler(async(req , res , next) =>{
         invoice_number: order._id
       };
     
-      const pdfPath = path.join(__dirname , `./../../tempInvoices/${order._id}.pdf`)
+      const pdfPath = process.env.MOOD === "DEV" ? path.join(__dirname , `./../../tempInvoices/${order._id}.pdf`): `/tempInvoices/${order._id}.pdf`
       
       createInvoice(invoice, pdfPath);
 
@@ -171,7 +171,6 @@ let event;
 
   // Handle the event
   const orderId = event.data.object.metadata.order_id
-  console.log(event.type)
   if (event.type === "checkout.session.completed"){
     await orderModel.findOneAndUpdate({_id : orderId} , {status : "visa paid"})
     return;

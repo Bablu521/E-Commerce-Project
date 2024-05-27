@@ -78,7 +78,7 @@ export const createOrder = asyncHandler(async(req , res , next) =>{
         invoice_number: order._id
       };
     
-      const pdfPath = process.env.MOOD === "DEV" ? path.join(__dirname , `./../../tempInvoices/${order._id}.pdf`): `/tempInvoices/${order._id}.pdf`
+      const pdfPath =  path.join(__dirname , `./../../tempInvoices/${order._id}.pdf`)
       
       createInvoice(invoice, pdfPath);
 
@@ -86,7 +86,7 @@ export const createOrder = asyncHandler(async(req , res , next) =>{
       order.invoice = { url : secure_url , id : public_id }
       await order.save ()
 
-      await unlink(pdfPath);
+     
 
       await sendEmail ({
         to : req.user.email ,

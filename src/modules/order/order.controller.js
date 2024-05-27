@@ -11,6 +11,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 import sendEmail from './../../utils/email.js';
 import { clearCart, updateStock } from "./order.service.js";
 import Stripe from "stripe";
+import fs from 'fs';
 
 
 //createOrder
@@ -77,8 +78,26 @@ export const createOrder = asyncHandler(async(req , res , next) =>{
         finalPrice : order.finalPrice ,
         invoice_number: order._id
       };
+
+      
+
+
+
+
     
       const pdfPath =  path.join(__dirname , `./../../tempInvoices/${order._id}.pdf`)
+
+      if (!fs.existsSync(pdfPath)) {
+        fs.mkdirSync(pdfPath, { recursive: true });
+    }
+    
+    fs.writeFile(pdfPath, 'Your file content here', (err) => {
+        if (err) {
+            console.error('An error occurred:', err);
+            return;
+        }
+        console.log('File written successfully');
+    });
       
       createInvoice(invoice, pdfPath);
 

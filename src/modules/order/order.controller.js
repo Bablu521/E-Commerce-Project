@@ -86,6 +86,8 @@ export const createOrder = asyncHandler(async(req , res , next) =>{
       order.invoice = { url : secure_url , id : public_id }
       await order.save ()
 
+      await unlink(pdfPath);
+
       await sendEmail ({
         to : req.user.email ,
         subject : "Order Invoice" ,

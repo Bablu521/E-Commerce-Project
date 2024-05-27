@@ -93,33 +93,37 @@ export const createOrder = asyncHandler(async(req , res , next) =>{
     
     
     // Define a writable directory path
-    const tempDir = '/tmp/tempInvoices';
-    const pdfPath = path.join(tempDir, `${order._id}.pdf`);
-    
-    // Ensure the writable directory exists
-    if (!fs.existsSync(tempDir)) {
-        fs.mkdirSync(tempDir, { recursive: true });
-    }
-    
-    // Create the invoice PDF in the writable directory
-    createInvoice(invoice, pdfPath);
-    
-    try {
-        // Upload the PDF to Cloudinary
-        const { secure_url, public_id } = await cloudinary.uploader.upload(pdfPath, {
-            folder: `${process.env.CLOUD_FOLDER_NAME}/order/invoices`
-        });
-    
-        // Update the order with the Cloudinary URL and ID
-        order.invoice = { url: secure_url, id: public_id };
-        await order.save();
-    
-        // Optionally, clean up the temporary file
-        fs.unlinkSync(pdfPath);
-    } catch (error) {
-        console.error('Error uploading to Cloudinary or saving order:', error);
-        // Handle the error as needed
-    }
+const tempDir = '/tmp/tempInvoices';
+const pdfPath = path.join(tempDir, `${order._id}.pdf`);
+
+// Ensure the writable directory exists
+if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir, { recursive: true });
+}
+
+// Create the invoice PDF in the writable directory
+createInvoice(invoice, pdfPath);
+
+try {
+    // Upload the PDF to Cloudinary
+    const result = await cloudinary.uploader.upload(pdfPath, {
+        folder: `${process.env.CLOUD_FOLDER_NAME}/order/invoices`
+    });
+
+    const { secure_url, public_id } = result;
+
+    // Update the order with the Cloudinary URL and ID
+    order.invoice = { url: secure_url, id: public_id };
+    await order.save();
+
+    // Optionally, clean up the temporary file
+    fs.unlinkSync(pdfPath);
+
+    console.log('File uploaded and order updated successfully');
+} catch (error) {
+    console.error('Error uploading to Cloudinary or saving order:', error);
+    // Handle the error as needed
+}
     
 
       await sendEmail ({

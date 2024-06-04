@@ -17,8 +17,10 @@ import { unlink } from "node:fs/promises";
 
 //createOrder
 export const createOrder = asyncHandler(async(req , res , next) =>{
+    //data
     const { phone , address , payment , coupon } = req.body
 
+    //checkCoupon
     let checkCoupon
     if (coupon){
         checkCoupon = await couponModel.findOne({name : coupon , expiredAt : {$gt : Date.now()}})
@@ -26,12 +28,14 @@ export const createOrder = asyncHandler(async(req , res , next) =>{
     if (!checkCoupon)
         return next (new Error("Invalid Coupon" , {cause:400}))
 
+    //get products from cart
     const cart = await cartModel.findOne({userId : req.user._id})
     const products = cart.products
     if (products.length < 1){
         return next (new Error("Empty Cart" , {cause:400}))
     }
 
+    //loop on products and push them in orderProducts array
     let orderProducts = []
     let orderPrice = 0
     for (let i = 0 ; i < products.length ; i++){
@@ -51,8 +55,10 @@ export const createOrder = asyncHandler(async(req , res , next) =>{
         totalPrice : product.finalPrice * products[i].quantity
     })
     orderPrice += product.finalPrice * products[i].quantity
-    
+
     }
+
+    //create order
     const order = await orderModel .create({
         userId : req.user._id ,
         products : orderProducts ,
@@ -67,6 +73,7 @@ export const createOrder = asyncHandler(async(req , res , next) =>{
         } 
     })
 
+    //create invoice
     const invoice = {
         shipping: {
           name: req.user.userName,
@@ -84,12 +91,15 @@ export const createOrder = asyncHandler(async(req , res , next) =>{
       
       createInvoice(invoice, pdfPath);
 
+      //upload invoice on cloudinary
       const {secure_url , public_id} = await cloudinary.uploader.upload(pdfPath , {folder:`${process.env.CLOUD_FOLDER_NAME}/order/invoices`})
       order.invoice = { url : secure_url , id : public_id }
       await order.save ()
 
+      //delete file from system
       await unlink(pdfPath);
 
+      //send invoice Email
       await sendEmail ({
         to : req.user.email ,
         subject : "Order Invoice" ,
@@ -99,10 +109,13 @@ export const createOrder = asyncHandler(async(req , res , next) =>{
         }]
       })
       
+      //update stock
       updateStock(order.products , true)
 
+      //clear cart
       clearCart(req.user._id)
 
+      //stripe gateway incase of payment by visa
       if(payment == "visa"){
 
         const stripe = new Stripe(process.env.STRIPE_KEY)
@@ -139,6 +152,8 @@ export const createOrder = asyncHandler(async(req , res , next) =>{
 
         return res.status(201).json({message:"Done" , results: {url:session.url}})
       }
+
+    //response
     return res.status(201).json({message:"Done", order})
 })
 

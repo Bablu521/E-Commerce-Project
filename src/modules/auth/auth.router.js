@@ -6,21 +6,24 @@ import * as authSchema from "./auth.schema.js"
 import { isAuthenticated } from './../../middleware/authentication.js';
 
 //signup
-router.post ("/signup" , validation(authSchema.signup) ,  authController.signup)
+router.post("/signup", validation(authSchema.signup), authController.signup)
+
+//loginWithGmail
+router.post("/loginWithGmail", authController.loginWithGmail)
 
 //activate_account
-router.get ("/activate_account/:token" , validation(authSchema.activate_account) , authController.activate_account)
+router.get("/activate_account/:token", validation(authSchema.activate_account), authController.activate_account)
 
 //login
-router.get ("/login" , validation(authSchema.login) ,  authController.login)
+router.get("/login", validation(authSchema.login), authController.login)
 
 //forgetCode
-router.patch ("/forgetCode" , validation(authSchema.forgetCode) ,  authController.forgetCode)
+router.patch("/forgetCode", validation(authSchema.forgetCode), authController.forgetCode)
 
 //resetPassword
-router.patch ("/resetPassword" , validation(authSchema.resetPassword) ,  authController.resetPassword)
+router.patch("/resetPassword", validation(authSchema.resetPassword), authController.resetPassword)
 
 //getAllUsers
-router.get("/getAllUsers" , isAuthenticated , authController.getAllUsers)
+router.get("/getAllUsers", isAuthenticated, authController.getAllUsers)
 
 export default router

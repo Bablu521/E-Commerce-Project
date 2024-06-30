@@ -1,66 +1,72 @@
-import mongoose , {Schema , model} from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 
-const userSchema = new Schema ({
-    userName:{
-        type:String ,
-        required:true ,
-        lowercase:true ,
-        min : 3 ,
-        max : 20
+const userSchema = new Schema({
+    userName: {
+        type: String,
+        required: true,
+        lowercase: true,
+        min: 3,
+        max: 20
     },
-    email:{
-        type:String ,
-        required:true ,
-        unique:true ,
-        lowercase:true , 
-        trim:true
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        lowercase: true,
+        trim: true
     },
-    password:{
-        type:String ,
-        required:true
+    password: {
+        type: String,
+        required: true
     },
-    age:Number ,
-    phone:String ,
-    gender:{
-        type:String ,
-        enum:["male" , "female"] ,
-        default :"male"
+    age: Number,
+    phone: String,
+    gender: {
+        type: String,
+        enum: ["male", "female"],
+        default: "male"
     },
-    isConfirmed:{
-        type:Boolean , 
-        default :"false"
+    isConfirmed: {
+        type: Boolean,
+        default: "false"
     },
-    role:{
-        type:String ,
-        enum:["user" , "seller" , "admin"] ,
-        default:"user"
+    role: {
+        type: String,
+        enum: ["user", "seller", "admin"],
+        default: "user"
     },
-    forgetCode:String ,
-    status :{
-        type : String ,
-        enum : ["offline" , "online" , "blocked"] ,
-        default : "offline"
+    forgetCode: String,
+    status: {
+        type: String,
+        enum: ["offline", "online", "blocked"],
+        default: "offline"
     },
-    profileImages :{
-        url:{
-            type:String ,
-            default:"https://res.cloudinary.com/dh5fn9ybu/image/upload/v1714766969/E-Commerce/users/defaults/profileImage/Blank-Profile-Picture_w5ry37.jpg"
+    profileImages: {
+        url: {
+            type: String,
+            default: "https://res.cloudinary.com/dh5fn9ybu/image/upload/v1714766969/E-Commerce/users/defaults/profileImage/Blank-Profile-Picture_w5ry37.jpg"
         },
-        id:{
-            type:String ,
+        id: {
+            type: String,
             default: "E-Commerce/users/defaults/profileImage/Blank-Profile-Picture_w5ry37"
         }
     },
-    coverImages:[
+    coverImages: [
         {
             url:
-            {type:String},
+                { type: String },
             id:
-            {type:String}
+                { type: String }
         }
-    ]
-},{timestamps:true})
+    ],
+    provider: {
+        type: String,
+        default: "system",
+        enum: ["system", "google", "facebook"]
+    },
+    token: String
+}, { timestamps: true })
 
-const userModel = mongoose.models.user || model("User" , userSchema)
+const userModel = mongoose.models.user || model("User", userSchema)
 
 export default userModel
